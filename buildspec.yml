@@ -1,0 +1,18 @@
+version: 0.1
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
+      - echo "Build completed."
+    finally:
+      - echo This is the finally block execution!
+artifacts:
+  base-directory: dist
+  files:
+    - '**/*'
