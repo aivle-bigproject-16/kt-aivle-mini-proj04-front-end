@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_REGION: us-east-1
-    AWS_ACCOUNT_ID: "416225317325"
+    AWS_ACCOUNT_ID: "879772956301"
     IMAGE_REPO_NAME: lms-frontend
 
 phases:
