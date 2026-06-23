@@ -20,9 +20,9 @@ spec:
       labels:
         app: lms-frontend
     spec:
-      containers:
+      containers: # image aws_account_id: 변경사항 확인해보기, back도
       - name: frontend-container
-        image: 416225317325.dkr.ecr.us-east-1.amazonaws.com/lms-frontend:latest
+        image: 879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend:latest
         
         ports:
         - containerPort: 80
