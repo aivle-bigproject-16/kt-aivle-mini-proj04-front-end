@@ -1,0 +1,128 @@
+.episode-page {
+  --page-bg: #f8f7f4;
+  --ink: #1e2530;
+  --subtle: #6e7987;
+  --accent: #e59a9a;
+  --accent-strong: #d48383;
+  --shadow-md: 0 12px 30px rgba(30, 37, 48, 0.07);
+
+  min-height: 100vh;
+  background: var(--page-bg);
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  padding: 48px 20px 80px;
+}
+
+.episode-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.episode-back {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--subtle);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 32px;
+  transition: color 0.2s ease;
+}
+
+.episode-back:hover {
+  color: var(--accent-strong);
+}
+
+.episode-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e0dcd5;
+}
+
+.episode-index {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.episode-title {
+  font-family: "Gowun Batang", serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.8px;
+  line-height: 1.4;
+}
+
+.episode-view {
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.episode-date {
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.episode-content {
+  font-size: 17px;
+  line-height: 2;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.ep-player {
+  margin-top: 48px;
+  padding: 20px 24px;
+  border: 1px solid #e0dcd5;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ep-player--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.ep-player-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ep-player-audio {
+  width: 100%;
+}
+
+.ep-player-empty {
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.episode-status {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 80px;
+  color: var(--subtle);
+}
+
+@media (max-width: 640px) {
+  .episode-page {
+    padding: 32px 16px 60px;
+  }
+
+  .episode-title {
+    font-size: 24px;
+  }
+
+  .episode-content {
+    font-size: 15px;
+  }
+}

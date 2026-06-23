@@ -1,0 +1,16 @@
+.text-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6b3232;
+}
+
+.footer-text-logo {
+  color: #f7f7f7;
+}
+
+.service-logo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 3px;
+}

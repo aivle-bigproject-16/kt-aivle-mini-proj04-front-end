@@ -1,0 +1,151 @@
+.searchWrap {
+  position: relative;
+}
+
+.search {
+  width: 40px;
+  height: 30px;
+  padding: 5px;
+  background: #ffc2c2;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.searchInput {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #f2cfcf;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff8f8 100%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  color: #2f2a2a;
+  font-size: 14px;
+  line-height: 1.2;
+  resize: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  z-index: 20;
+}
+
+.searchInputJoined {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #ffb3b3;
+  box-shadow:
+    0 0 0 3px rgba(255, 179, 179, 0.25),
+    0 10px 22px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.searchInput::placeholder {
+  color: #b18f8f;
+}
+
+.searchResult {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 3px;
+  width: 82%;
+  max-height: 260px;
+  padding: 6px;
+  list-style: none;
+  overflow-y: auto;
+  border-top: none;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #fffafa 0%, #fff2f2 100%);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  z-index: 25;
+}
+
+.searchResult li {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.searchResult li + li {
+  margin-top: 4px;
+}
+
+.resultLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+  color: #2f2a2a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.resultLink:hover {
+  background-color: #ffe6e6;
+  transform: translateY(-1px);
+}
+
+.resultLink span:first-child {
+  text-decoration: none;
+}
+
+.searchResult span {
+  color: #7a6868;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.alarmResult {
+  max-height: 260px;
+  width: 300px;
+  left: auto;
+  right: 0;
+  overflow-y: auto;
+}
+
+.alarmItem {
+  padding: 10px 6px;
+  color: #2f2a2a;
+  font-weight: 700;
+}
+
+.alarmDivider {
+  height: 1px;
+  margin: 0 6px;
+  background: rgba(122, 104, 104, 0.18);
+  list-style: none;
+  padding: 0;
+}
+
+.alarmContent {
+  display: block;
+  color: #7a6868;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.alarmContent span {
+  font-size: 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.alarmLink {
+  display: inline;
+  color: #995349;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: normal;
+}

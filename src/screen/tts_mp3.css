@@ -1,0 +1,97 @@
+.aitts {
+  background: #fff;
+  border: 1px solid #e0dcd5;
+  border-radius: 12px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+}
+
+.aitts h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e2530;
+  margin: 0;
+}
+
+.aitts-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aitts-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e2530;
+}
+
+.aitts-field select {
+  padding: 8px 12px;
+  border: 1px solid #e0dcd5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e2530;
+  background: #faf9f7;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  max-width: 260px;
+}
+
+.aitts-field select:focus {
+  border-color: #e59a9a;
+}
+
+.aitts-btn {
+  align-self: flex-start;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #e59a9a;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.aitts-btn:hover:not(:disabled) {
+  background: #d48383;
+}
+
+.aitts-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.aitts-error {
+  font-size: 13px;
+  color: #e05c5c;
+  margin: 0;
+}
+
+.aitts-player {
+  margin-top: 4px;
+}
+
+.aitts-player audio {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.aitts-success {
+  font-size: 13px;
+  color: #2e7d32;
+  margin: 0;
+}
+
+.aitts-notice {
+  font-size: 12px;
+  color: #6e7987;
+  margin: 0;
+}

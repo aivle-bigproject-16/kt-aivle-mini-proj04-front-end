@@ -1,0 +1,20 @@
+footer {
+  width: 100%;
+  background: #995349;
+  padding: 50px 75px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer span {
+  color: #f7f7f7;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

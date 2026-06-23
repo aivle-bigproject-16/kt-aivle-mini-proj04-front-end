@@ -1,0 +1,771 @@
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Gothic:wght@400;700&display=swap");
+
+.book-detail-page {
+  --mocha: #995349;
+  --mocha-dark: #7a4239;
+  --mocha-darker: #5c2f28;
+  --cream: #f5efe8;
+  --cream-soft: #ede5dc;
+  --ink: #2c2c2c;
+  --subtle: #6b6b6b;
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --shadow-book: 12px 12px 24px rgba(0, 0, 0, 0.35);
+  min-height: 100vh;
+  background: var(--mocha);
+  padding: 60px 40px 80px;
+  width: 100%;
+}
+
+/* ===== Main 영역 ===== */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== 뒤로 가기 버튼 ===== */
+.back-button {
+  border: 0;
+  background: transparent;
+  color: var(--cream);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-2px);
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+}
+
+/* ===== 책 상세 영역 (flex로 좌우 배치, 카드 X) ===== */
+.book-detail-Card {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  animation: fade-in 0.6s ease forwards;
+}
+
+/* ===== 왼쪽: 표지 + 에피소드 컬럼 ===== */
+.book-cover-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* ===== 왼쪽: 표지 (배경 없이 모카 위에 둠) ===== */
+.book-detail-page .book-cover {
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+}
+
+.book-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  box-shadow: var(--shadow-book);
+}
+
+/* 이미지 없을 때 Placeholder */
+.book-cover-placeholder {
+  width: 280px;
+  height: 400px;
+  background: var(--mocha-darker);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  box-shadow: var(--shadow-book);
+  padding: 24px;
+  border: 2px solid var(--cream);
+}
+
+.placeholder-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+
+.placeholder-text {
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cream);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ===== 오른쪽: 책 정보 (크림색 카드) ===== */
+.book-info {
+  flex: 1;
+  min-width: 0;
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 56px 64px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 480px;
+}
+
+/* 제목 + 등록일 한 줄 배치용 wrapper */
+.book-title {
+  font-size: 56px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--ink);
+  word-break: keep-all;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* 저자 */
+.book-author {
+  font-size: 16px;
+  color: var(--subtle);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+/* 내용 라벨 (디자인상 숨김) */
+.content-label {
+  display: none;
+}
+
+/* 내용 박스 */
+.content-box {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  flex: 1;
+  margin-top: 12px;
+}
+
+.content-box p {
+  white-space: pre-line;
+  line-height: 1.9;
+  color: var(--ink);
+  margin: 0;
+  font-size: 14px;
+}
+
+.book-date-like {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 등록일 (제목 옆 작은 배지) */
+.book-date {
+  font-size: 12px;
+  color: var(--subtle);
+  margin: 0;
+  padding: 6px 12px;
+  background: var(--cream-soft);
+  border-radius: 4px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  align-self: flex-start;
+}
+
+.like-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.like-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--subtle);
+}
+
+.like-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #1e1e1e;
+  transition: transform 0.15s ease;
+}
+
+.like-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.like-button svg path {
+  fill: transparent;
+  stroke: currentColor;
+}
+
+.like-button.liked {
+  color: #e53935;
+}
+
+.like-button.liked svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.like-button:hover {
+  transform: scale(1.08);
+}
+
+.like-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.like-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ===== 수정/삭제 버튼 ===== */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 32px;
+}
+
+.btn-edit,
+.btn-delete,
+.comment-submit {
+  border: 0;
+  padding: 14px 48px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 3px;
+  border-radius: 4px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    letter-spacing 0.2s ease;
+  min-width: 140px;
+  text-transform: uppercase;
+}
+
+.btn-edit {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.btn-edit:hover,
+.comment-submit:hover {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn-delete {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+
+.btn-delete:hover {
+  background: var(--ink);
+  color: var(--cream);
+  transform: translateY(-2px);
+  letter-spacing: 4px;
+}
+
+.btn-edit:focus-visible,
+.btn-delete:focus-visible,
+.comment-submit:focus-visible {
+  outline: 2px solid #2d2d2d;
+  outline-offset: 2px;
+}
+
+.episodes-section {
+  margin-top: 32px;
+  padding: 28px;
+  background: #faf3f3;
+  border-radius: 12px;
+}
+
+.episodes-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.episodes-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.episodes-header span {
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.no-episodes {
+  font-size: 14px;
+  color: var(--subtle);
+  text-align: center;
+  padding: 20px 0;
+}
+
+.episode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.episode-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #ede5dc;
+}
+
+.episode-item:hover {
+  background: var(--cream-soft);
+  transform: translateX(4px);
+  border-color: var(--mocha);
+}
+
+.episode-number {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mocha);
+  min-width: 36px;
+}
+
+.episode-title {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.comments-section {
+  margin-top: 32px;
+  padding: 28px;
+  background: #faf3f3;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.comments-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.comments-header span {
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comment-input {
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+}
+
+.comment-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(244, 180, 180, 0.18);
+}
+
+.comment-error {
+  margin: 0;
+  color: #d45d5d;
+  font-size: 13px;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.comment-item {
+  padding: 18px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.comment-date {
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.comment-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.comment-edit {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comment-edit:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--mocha);
+  color: var(--mocha);
+}
+
+.comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-delete {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.comment-delete:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--accent);
+}
+
+.comment-text {
+  margin: 0;
+  line-height: 1.75;
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+.comment-login-notice {
+  font-size: 14px;
+  color: var(--subtle);
+  padding: 16px 0;
+}
+
+.comment-login-notice a {
+  color: var(--mocha);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.comment-login-notice a:hover {
+  text-decoration: underline;
+}
+
+.comment-more-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #e0dcd5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comment-more-btn:hover {
+  background: var(--cream-soft);
+  border-color: var(--mocha);
+  color: var(--mocha);
+}
+
+.no-comments {
+  margin: 0;
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+/* 책 없을 때 화면 */
+.book-detail-page .main-content > p {
+  background: var(--cream);
+  padding: 60px 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ===== 애니메이션 ===== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 900px) {
+  .book-detail-page {
+    padding: 40px 24px 60px;
+  }
+
+  .book-detail-Card {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .book-detail-page .book-cover {
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+  }
+
+  .book-info {
+    width: 100%;
+    padding: 40px 32px;
+    min-height: auto;
+  }
+
+  .book-title {
+    font-size: 36px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .book-author {
+    text-align: center;
+  }
+
+  .book-date {
+    align-self: center;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-title {
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+
+  .book-info {
+    padding: 32px 20px;
+  }
+}
+
+/* ===== 오디오북 TTS 섹션 ===== */
+.tts-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cream-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tts-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.tts-key-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tts-key-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.tts-key-input:focus {
+  border-color: var(--mocha);
+}
+
+.tts-voice-select {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tts-generate-btn {
+  padding: 8px 20px;
+  background: var(--mocha);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+.tts-generate-btn:hover:not(:disabled) {
+  background: var(--mocha-dark);
+  transform: translateY(-1px);
+}
+
+.tts-generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tts-delete-btn {
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.tts-delete-btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.tts-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tts-player {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.tts-error {
+  margin: 0;
+  font-size: 12px;
+  color: #e53e3e;
+}
+
+.tts-notice {
+  margin: 0;
+  font-size: 11px;
+  color: var(--subtle);
+}

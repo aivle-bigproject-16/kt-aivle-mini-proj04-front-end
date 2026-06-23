@@ -1,0 +1,286 @@
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Gothic:wght@400;700&display=swap");
+
+.book-list-page {
+  --page-bg: #d8d8d8;
+  --panel-bg: #ffffff;
+  --bar-bg: #cfcfcf;
+  --ink: #1b1b1b;
+  --subtle: #5a5a5a;
+  --accent: #f4b4b4;
+  --accent-strong: #ef9f9f;
+  --band-bg: #f7dede;
+  --shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 6px 12px rgba(0, 0, 0, 0.12);
+  --shell-width: 1120px;
+}
+
+.book-list-page {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(180deg, #dadada 0%, #cfcfcf 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: "Nanum Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+
+.book-main {
+  flex: 1;
+  width: min(var(--shell-width), 100%);
+  margin: 0 auto;
+  padding: 40px 28px 64px;
+  box-sizing: border-box;
+}
+
+.book-main-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.book-main-top h2 {
+  font-family: "Gowun Batang", "Nanum Gothic", serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.4px;
+  position: relative;
+  padding-left: 18px;
+}
+
+.book-main-top h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 26px;
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.search-box {
+  width: 240px;
+  height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.search-box:hover {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.search-box:focus-visible {
+  outline: 2px solid #2d2d2d;
+  outline-offset: 2px;
+}
+
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  animation: fade-up 0.6s ease forwards;
+}
+
+/* JSX에서 <Link>로 카드를 감싸면 기본 a 태그 스타일(밑줄, 파란색)이 들어감 */
+.book-list a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.book-card {
+  background: var(--panel-bg);
+  padding: 16px;
+  border-radius: 14px;
+  text-align: center;
+  border: 1px solid #ececec;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent);
+}
+
+.book-list .book-cover {
+  width: 100%;
+  aspect-ratio: 4 / 5; /* 카드마다 표지 영역 크기 통일 → 텍스트 위치 고정 */
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.book-list .book-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* 표지 없을 때 (empty-cover) */
+.empty-cover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 13px;
+  font-weight: 500;
+  background: #f5f5f5;
+}
+
+/* 책 정보 */
+.book-card h3 {
+  font-family: "Gowun Batang", serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.4;
+  min-height: 2.8em; /* 제목 영역 높이 고정해서 카드 정렬 일관성 유지 */
+  /* 긴 제목 2줄까지만 표시 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.book-card p {
+  font-size: 12.5px;
+  color: var(--subtle);
+  margin: 0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-card p:last-of-type {
+  font-size: 11.5px;
+  color: #8a8a8a;
+}
+
+/*"+ 새 도서 등록" 카드 */
+.add-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border: 2px dashed #d8d8d8;
+  aspect-ratio: 4 / 5; /* 일반 표지와 동일 비율 유지 */
+  border-radius: 8px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.add-cover:hover {
+  background: #fff5f5;
+  border-color: var(--accent);
+}
+
+.add-cover:active {
+  transform: scale(0.98);
+}
+
+.add-cover span {
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 10px;
+  color: #b0b0b0;
+}
+
+.add-cover p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  margin: 0;
+  white-space: nowrap;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .book-main {
+    padding: 32px 18px 48px;
+  }
+
+  .book-main-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .book-main-top h2 {
+    font-size: 24px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .book-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .book-card {
+    padding: 14px;
+  }
+
+  .book-card h3 {
+    font-size: 14px;
+  }
+}
