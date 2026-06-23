@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-frontend-service
+  namespace: default
+spec:
+  selector:
+    app: lms-frontend
+  ports: 
+    - protocol: TCP
+      port: 80        # 서비스를 호출할 때 쓰는 포트
+      targetPort: 80
+  type: NodePort      # AWS Ingress Controller(ALB) 연동을 위한 표준 타입 - 이후 조정
