@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lms-frontend-config
+  namespace: default
+data:
+  NODE_ENV: "production"
+  #buildspec에서 사용하던 VITE_API_URL 등에 대한 런타임 설정이 필요할 경우 추가
