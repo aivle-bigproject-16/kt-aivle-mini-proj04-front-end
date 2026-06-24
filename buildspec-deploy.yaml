@@ -24,10 +24,12 @@ phases:
       # 중요: 이전 단계(Build)에서 넘어온 최신 이미지 태그로 deployment.yaml 내부의 이미지 주소를 치환합니다.
       # (아래 sed 명령어는 Linux 환경에서 파일 안의 특정 문자열을 찾아 바꾸는 명령어입니다.)
       - echo "매니페스트 이미지 태그 업데이트..."
-      - # 주의: $REPOSITORY_URI 와 $IMAGE_TAG 는 CodePipeline 환경 변수로 전달받아야 합니다.
-      - sed -i "s|image: .*lms-backend:latest|image: 879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend:$IMAGE_TAG|g" k8s/frontend-deployment.yaml
-      # 빌드 때 생성한 태그와 동일한 태그를 여기서도 똑같이 만들어냅니다)
+      
+        # 빌드 때 생성한 태그와 동일한 태그를 여기서도 똑같이 만들어냅니다)
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+      - # 주의: $REPOSITORY_URI 와 $IMAGE_TAG 는 CodePipeline 환경 변수로 전달받아야 합니다.
+      - sed -i "s|image: .*lms-frontend:latest|image: 879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend:$IMAGE_TAG|g" k8s/frontend-deployment.yaml
       
       # 매니페스트 적용 (파드 생성/업데이트)
       - kubectl apply -f k8s/frontend-config.yaml
