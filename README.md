@@ -1,214 +1,162 @@
-# 📚 Pic:Story
-
-
-> AIVLE EDU 4차 미니 프로젝트 — AI 기반 도서 표지 자동 생성 기능을 탑재한 사이트입니다. 사용자가 도서 정보를 관리(CRUD)할 수 있으며, 도서 내용을 기반으로 OpenAI API를 호출하여 맞춤형 도서 표지를 자동으로 생성해 주는 기능을 포함하고 있습니다.
-
-
-
-
----
-
+# LMS Frontend - EKS 기반 CI/CD 배포 문서
 
 ## 프로젝트 개요
 
+이 repository는 도서 관리 및 에피소드 서비스의 프론트엔드 애플리케이션입니다. React와 Vite를 기반으로 로그인/회원가입, 도서 목록, 도서 상세, 에피소드 작성/조회, 댓글, 좋아요, AI 커버 생성 화면을 제공합니다.
 
-| 항목 | 내용 |
-|:---:|---|
-| **주제** | 도서관리 시스템 개발 + AI 활용 도서 표지 생성 |
-| **목적** | 표지 제작에 부담을 느끼는 작가를위한 AI 표지생성지원 |
-| **진행 기간** | 3일 |
-| **차수** | 미니 프로젝트 4차 |
-| **플랫폼** | AIVLE EDU |
+우리 조는 프론트엔드와 백엔드를 모두 EKS에 배포하는 구조를 목표로 합니다. 프론트엔드는 정적 파일만 제공한다면 S3 배포도 가능하지만, 로그인 쿠키, 백엔드 API 연동, 같은 ALB 아래에서의 라우팅 구성을 고려해 백엔드와 동일하게 컨테이너 기반 EKS 배포 대상으로 잡았습니다.
 
+공통 클라우드 아키텍처, 네트워크, EKS, IAM, Auto Scaling, CloudWatch 상세 설명은 백엔드 README를 기준 문서로 관리합니다.
 
-### 주요 목표
+- 공통 클라우드 기준 문서: https://github.com/aivle-bigproject-16/KT-AIVLE-mini-proj05-back-end
 
+## Frontend Repository 구성
 
-1. **React + json-server** 기반 RESTful API 통신 및 CRUD 구현
-2. **OpenAI GPT Image 2** 모델을 활용한 프롬프트 엔지니어링 및 외부 API 연동
-3. **Base64 이미지 데이터** 처리 및 부분 업데이트(PATCH) 적용
-
-
----
-
-
-## 기술 스택
-
-
-| 레이어 | 기술 |
-|:---:|---|
-| **Frontend** | React 19, Vite, axios |
-| **Mock Backend** | json-server (로컬 REST API) |
-| **AI** | OpenAI API (GPT Image 2) |
-| **UI 라이브러리** | MUI (Material UI) |
-| **협업 / 배포** | GitHub, Vercel |
-> 현재 백엔드는 `json-server` 기반 Mock API이며, 추후 **Spring Boot** 실제 백엔드 서버로 교체 예정입니다.
-
-
----
-
-
-## 데이터 관리 구조 (Data Persistence Options)
- 프로젝트의 유연한 데이터 관리를 위해 두 가지 아키텍처 패턴을 고려 및 검증했습니다.
- * **방법 1 (브라우저 스토리지 아키텍처):** 외부 서버 독립형 구조로, 웹 브라우저의 로컬 스토리지, 세션 스토리지 및 쿠키를 활용하여 클라이언트 사이드에서 데이터를 영속적으로 유지하는 방식 검증
- * **방법 2 (Mock API 서버 아키텍처):** 로컬 환경에서 REST API 역할을 수행하는 `json-server`를 구축하여 실제 데이터베이스 및 백엔드 서버와 통신하는 듯한 가상화 환경 구성
-
-
-## 폴더 구조
-
-
-```
-KT-AIVLE-mini-proj04
-├── public/
-├── src/
-│   ├── assets/          # 이미지, 아이콘 등 정적 리소스
-│   ├── common/          # 공통 유틸리티 함수, 상수 관리
-│   ├── hooks/           # axios API 연동 및 커스텀 훅
-│   ├── screen/          # 페이지 컴포넌트 (목록, 상세, 등록, 수정)
-│   ├── App.jsx          # 라우팅 및 전역 상태 레이아웃
-│   ├── main.jsx         # 앱 진입점
-│   └── index.css        # 전역 스타일 시트
-├── db.json              # Mock API 로컬 데이터베이스
-├── package.json         # 의존성 및 스크립트 설정
-└── vite.config.js       # Vite 빌드 및 개발 서버 설정
+```text
+KT-AIVLE-mini-proj04-front-end/
+├── api/                      # json-server 또는 서버리스 형태의 API 보조 코드
+├── public/                   # 정적 리소스, 아이콘, favicon
+├── src/                      # React 프론트엔드 소스코드
+│   ├── assets/               # 이미지, SVG 등 화면 자산
+│   ├── common/               # 공통 레이아웃, Header/Footer/Button 등 재사용 컴포넌트
+│   ├── hooks/                # API 호출 및 화면 로직용 커스텀 훅
+│   │   └── auth/             # 로그인, 회원가입, 토큰 갱신 관련 훅
+│   ├── screen/               # 주요 페이지 단위 컴포넌트
+│   ├── utils/                # 인증 저장소, 검색 유틸 등 공통 유틸
+│   ├── App.jsx               # 라우팅 및 최상위 앱 구성
+│   └── main.jsx              # React 앱 진입점
+├── buildspec.yml             # 현재 CodeBuild용 프론트엔드 빌드 명세
+├── package.json              # npm scripts 및 의존성
+├── vite.config.js            # Vite 설정
+├── vercel.json               # 기존 배포 설정 파일
+└── README.md
 ```
 
+## 주요 기술 스택
 
----
+| 구분 | 사용 기술 |
+| --- | --- |
+| Framework | React 19 |
+| Build Tool | Vite |
+| Routing | react-router-dom |
+| API 통신 | axios |
+| 상태 관리 | zustand |
+| Mock/API 보조 | json-server |
+| CI/CD | GitHub, AWS CodePipeline, AWS CodeBuild |
+| Container Registry | Amazon ECR |
+| Deployment Target | Amazon EKS |
 
+## 프론트엔드 배포 선택 이유
 
-## 주요 기능 및 요구사항
+| 선택 항목 | 이유 |
+| --- | --- |
+| EKS 배포 | 백엔드와 같은 클러스터에서 실행해 ALB/Ingress 라우팅을 단순화합니다. |
+| Docker 이미지 | Vite 빌드 결과물을 Nginx 컨테이너로 실행하면 실행 환경이 고정됩니다. |
+| ECR `lms-frontend` | CodeBuild가 만든 프론트엔드 이미지를 저장하고 EKS에서 pull합니다. |
+| ALB Ingress | `/` 화면 요청은 frontend-service로, API 요청은 backend-service로 나눌 수 있습니다. |
+| Auto Scaling | 트래픽 증가 시 frontend Pod replica를 늘려 정적 리소스 응답 부하를 분산합니다. |
 
+## 전체 클라우드 구조
 
-### 1. 도서 CRUD
+공통 구조는 백엔드 README의 전체 클라우드 구조를 기준으로 합니다. 프론트엔드는 아래 흐름에서 `Frontend GitHub Repo -> mini16-front-end-pipe -> mini16-front-end -> lms-frontend -> frontend Pod` 구간을 담당합니다.
 
-
-| 기능 | 메서드 | 설명 |
-|---|:---:|---|
-| **목록 조회** | `GET` | 전체 도서 리스트 출력. 제목·등록일 표시 |
-| **상세 조회** | `GET` | AI 표지, 작성/수정일, 본문 내용 열람 |
-| **도서 등록** | `POST` | 제목·내용 입력 → 완료 시 목록 페이지로 자동 이동 |
-| **도서 수정** | `PATCH` | 수정 버튼 클릭 → 수정 페이지로 이동, 기존 정보 자동 로딩, 업데이트 전 "수정하시겠습니까?" 확인 메시지 출력 |
-| **도서 삭제** | `DELETE` | 삭제 전 **확인(Confirm) 알림** 제공, 삭제 후 목록 즉시 반영 |
-
-
-### 2. 폼 유효성 검사
-
-
-- 제목·내용 **필수 입력** 검증 (단순 공백 불허)
-- **길이 제한** 적용
-
-
-### 3. 부가 기능 및 UX 편의성 강화
-- 알림 시스템: 도서 상세 페이지 내 좋아요, 댓글, 업데이트 이벤트 발생 시 상단 알림 목록에 안내 메시지가 누적되도록 구현
-- 음성안내기능 (TTS): 도서 상세 페이지(BookDetail) 내에서 도서의 제목, 저자, 본문 내용을 읽어주는 Web Speech API 기반 TTS 기능 통합
-- 검색 및 필터: GNB(Header) 영역에 검색 바 및 필터 기능 상시 배치
-- 로딩 UX: 데이터 Fetch 및 AI 이미지 생성 시 로딩 스피너/메시지 제공
-- 도서 상세 페이지에서 댓글 생성/삭제/좋아요 기능 추가
-- 생성이미지 사이즈 조절옵션 추가
-
-
-### 4. AI 표지 생성
-
-
-| 항목 | 상세 |
-|---|---|
-| **옵션 선택 UI** | 생성 모델, 이미지 크기 등 파라미터를 사용자 UI에서 직접 선택 |
-| **프롬프트 템플릿** | 도서 제목 + 저자 + 내용을 조합한 구조화된 프롬프트로 OpenAI 호출 |
-| **API Key 입력** | 보안을 위해 코드에 하드코딩하지 않고, **UI를 통해 직접 입력** 방식 채택 |
-| **상태 처리** | 로딩 스피너 + 에러 핸들링 + **비용 발생 안내 메시지** 표시 |
-| **즉시 반영** | 응답받은 `b64_json`을 Data URL로 변환 → 상세 페이지에 즉시 렌더링 |
-| **표지 저장** | 변환된 Data URL을 `PATCH /books/:id`로 DB에 영구 저장 |
-
-
-### 5. 검색 및 필터
-
-
-- GNB(Header) 영역에 **검색 바** 및 **필터 기능** 배치
-
-
-### 6. 로딩 UX
-
-
-- 데이터 Fetch 및 AI 이미지 생성 시 **로딩 스피너/메시지** 제공
-
-
----
-
-
-## 서비스 흐름도
-
-
-```
-┌──────────────────┐       CRUD        ┌──────────────────┐
-│                  │ ◄──────────────►  │                  │
-│  Client          │   GET / POST /    │  Mock DB         │
-│  (React SPA)     │   PATCH / DELETE  │  (json-server)   │
-│                  │                   │  db.json         │
-└────────┬─────────┘                   └──────────────────┘
-         │
-         │  POST (prompt)
-         ▼
-┌──────────────────┐
-│  OpenAI API      │
-│  (GPT Image 2)   │
-│                  │
-│  → b64_json 반환  │
-└──────────────────┘
+```mermaid
+flowchart LR
+    FE_GH["GitHub Frontend Repo\nKT-AIVLE-mini-proj04-front-end"] --> FE_CP["CodePipeline\nmini16-front-end-pipe"]
+    FE_CP --> FE_CB["CodeBuild\nmini16-front-end"]
+    FE_CB --> FE_ECR["ECR\nlms-frontend"]
+    FE_ECR --> EKS["EKS Cluster\nuser126-cluster"]
+    EKS --> FE_POD["frontend Pod\nlms-frontend image"]
+    ALB["ALB / Ingress"] --> FE_SVC["frontend-service"]
+    FE_SVC --> FE_POD
 ```
 
-**상세 플로우:**
-1. **Client ↔ Mock DB** — `db.json`을 통한 도서 정보 CRUD
-2. **Client → OpenAI API** — 도서 내용 기반 표지 생성 요청 (`POST` + prompt)
-3. **OpenAI API → Client** — Base64 인코딩 이미지 데이터(`b64_json`) 반환
-4. **Client → Mock DB** — Data URL로 변환한 표지 이미지를 `PATCH /books/:id`로 저장
+## 현재 CI/CD 상태
 
+현재 `buildspec.yml`은 Node.js 20 환경에서 프론트엔드 정적 빌드를 수행합니다.
 
----
-## 화면 스크린샷
-![image](https://github.com/KT-AIVLE-mini-proj04/KT-AIVLE-mini-proj04/issues/34#issue-4530115560)
+```text
+install: Node.js 20 런타임 사용
+pre_build: npm install
+build: npm run build
+artifacts: dist 폴더 산출물 생성
+```
 
+즉, 현재 상태는 Vite build 결과물 생성까지이며, EKS 컨테이너 배포를 완료하려면 Docker/ECR/Deploy 단계가 추가되어야 합니다.
 
-## 실행 방법
+## 목표 CI/CD 파이프라인
 
+```mermaid
+flowchart LR
+    SRC["Source\nGitHub main branch"] --> BUILD["Build\nCodeBuild mini16-front-end"]
+    BUILD --> IMAGE["Docker Build\nNginx + dist"]
+    IMAGE --> ECR["ECR Push\nlms-frontend"]
+    ECR --> DEPLOY["Deploy\nfrontend-deployment"]
+    DEPLOY --> ALB["ALB Ingress\n서비스 노출"]
+```
 
-### 사전 요구 사항
+## 각 스테이지에서 필요한 세팅
 
+| Stage | 필요한 세팅 | 현재 상태 |
+| --- | --- | --- |
+| Source | GitHub Connector로 `aivle-bigproject-16/KT-AIVLE-mini-proj04-front-end` 연결 | 구성됨 |
+| Build | `npm install`, `npm run build` | 구성됨 |
+| Docker Build | `Dockerfile`, `nginx.conf`, ECR login, image tag 설정 | 추가 필요 |
+| ECR Push | `879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend`로 push | 추가 필요 |
+| Deploy | `frontend-deployment.yaml`, `frontend-service.yaml` 적용 | 추가 필요 |
+| Routing | Ingress에서 `/` 또는 프론트 경로를 frontend-service로 연결 | 추가 필요 |
+| Scaling | `frontend-hpa.yaml`로 CPU 기준 replica 조절 | 추가 필요 |
 
-- **Node.js** (v18 이상 권장)
-- **yarn**
-- **OpenAI API Key** (표지 생성 기능 사용 시 필요, UI에서 입력)
+## 추가해야 할 배포 파일
 
+| 파일 | 역할 |
+| --- | --- |
+| `Dockerfile` | Vite 빌드 결과물인 `dist`를 Nginx 컨테이너로 실행합니다. |
+| `nginx.conf` | React SPA 새로고침 시 404가 나지 않도록 `index.html` fallback을 설정합니다. |
+| `k8s/frontend-deployment.yaml` | `lms-frontend` 이미지를 사용하는 frontend Pod와 replica 수를 정의합니다. |
+| `k8s/frontend-service.yaml` | frontend Pod를 내부 Service로 묶어 Ingress가 접근할 수 있게 합니다. |
+| `k8s/frontend-hpa.yaml` | CPU 기준으로 frontend Pod replica를 자동 조절합니다. |
 
-### 설치 및 실행
+Ingress는 프론트와 백엔드가 함께 사용하는 공통 라우팅 리소스이므로 백엔드 README의 공통 클라우드 기준 문서에서 관리합니다.
 
+## 프론트엔드 요청 흐름
 
-```bash
-# 1. 저장소 클론
-git clone https://github.com/KT-AIVLE-mini-proj04/KT-AIVLE-mini-proj04.git
+```text
+User Browser
+-> ALB
+-> Ingress
+-> frontend-service
+-> frontend Pod
+-> Nginx
+-> React 정적 파일 제공
+-> React 앱에서 백엔드 API 호출
+```
 
+## 실행 명령
 
-# 2. 패키지 설치
-cd KT-AIVLE-mini-proj04
+```powershell
 npm install
-
-
-# 3. json-server 실행 (새 터미널)
-npx json-server --watch db.json --port 3001
-
-
-# 4. 개발 서버 실행
 npm run dev
 ```
 
+PowerShell에서 `npm.ps1` 실행 정책 오류가 발생하면 아래처럼 `npm.cmd`를 사용할 수 있습니다.
 
-##  팀원 및 역할
-* **[심경민]**: [역할 - PM, 기획 - 과제 총괄 진행, 요구사항 정의, 기능 명세서 작성]
-* **[유우식]**: [역할 - 발표,문서 - README.md 정리, 발표자료 작성, 데모 시연 준비]
-* **[김현민]**: [역할 - 발표자 - CSS 마감, 반응형 대응, E2E 시나리오 테스트]
-* **[김성준]**: [역할 - CRUD 연동 - 페이지 구조 설계, 공통 컴포넌트 제작, 전체 디자인 톤 관리]
-* **[김창민]**: [역할 - OpenAI 연동 - GPT Image API 호출 및 응답 변환, API Key UI, 에러 · 로딩처리]
-* **[노경천]**: [역할 - OpenAI 연동 - 과제 총괄 진행, 요구사항 정의, 기능 명세서 작성]
-* **[박종호]**: [역할 - UI•레이아웃 - GPT Image API 호출 및 응답 변환, API Key UI, 에러 · 로딩처리]
-* **[방리오]**: [역할 - 스타일링, QA - CSS 마감, 반응형 대응, E2E 시나리오 테스트, README.md 정리]
-* **[성현석]**: [역할 - 스타일링, QA - json-server 세팅, 목록/상세/등록/수정/삭제 API 연동]
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
+
+## 민감정보 관리
+
+`.env`에는 API 주소나 환경 변수가 들어갈 수 있으므로 GitHub에 올리지 않습니다. AWS Access Key, DB 비밀번호, JWT Secret 같은 값은 README에 기록하지 않고, 배포 환경에서는 Kubernetes Secret, AWS Secrets Manager, CodeBuild 환경 변수로 관리합니다.
+
+## 미니프로젝트 6차 R&R
+
+| 역할 | 담당 | 비고 |
+| --- | --- | --- |
+| 조장 | 김경순 | 기술 P1 겸임, 전체관리 |
+| 발표자 | 심경민 | Day3 발표 |
+| 서기 | 공다연 | 기록, README |
+| 검토 담당자 | 김성준, 장윤재 | 크로스체크, 칸반보드 보조 |
+| 타임키퍼 | 김현민 | 칸반보드 관리 |
+| ppt 제작자 | 김창민, 조승대 | 3일차 발표자료 |
