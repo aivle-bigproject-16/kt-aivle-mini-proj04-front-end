@@ -1,6 +1,6 @@
 import { commonPostHook } from "@hooks/common.hook";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || "/api";
+const apiBaseUrl = "/api";
 
 export const hookBooks = async (method, data) => {
   const baseUrl = `${apiBaseUrl}/books/${data.id}`;

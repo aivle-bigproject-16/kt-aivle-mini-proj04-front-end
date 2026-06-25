@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setAccessToken, setUser } from "@utils/authStore";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || "/api";
+const apiBaseUrl = "/api";
 
 export const refreshAccessToken = async () => {
   const res = await axios.post(`${apiBaseUrl}/auth/refresh`, null, {
