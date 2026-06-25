@@ -4,8 +4,8 @@ metadata:
   name: lms-frontend-deployment
   namespace: default
 spec:
-  replicas: 2
-  
+  # replicas 미지정: HPA(lms-frontend-deployment)가 Pod 수(2~10)를 관리.
+  # 여기에 명시하면 배포(apply)마다 HPA가 키운 replica가 그 값으로 리셋됨.
   strategy:
     type: RollingUpdate # 롤링 파트
     rollingUpdate:
