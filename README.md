@@ -30,7 +30,6 @@ KT-AIVLE-mini-proj04-front-end/
 │   ├── App.jsx                   # 라우팅 및 최상위 앱 구성
 │   └── main.jsx                  # React 앱 진입점
 ├── buildspec.yml                 # Docker image build + ECR push용 CodeBuild 명세
-├── buildspec-deploy.yaml         # EKS kubectl apply 배포용 CodeBuild 명세
 ├── dockerfile                    # Vite build 후 Nginx 이미지로 실행하는 Docker 빌드 파일
 ├── nginx.conf                    # React SPA fallback 설정
 ├── package.json                  # npm scripts 및 의존성
@@ -85,7 +84,6 @@ flowchart LR
 | 파일 | 현재 역할 | 상태 |
 | --- | --- | --- |
 | `buildspec.yml` | ECR 로그인, Docker image build/tag/push | 구성됨 |
-| `buildspec-deploy.yaml` | `kubectl` 설치, kubeconfig 설정, frontend 매니페스트 apply, rollout 확인 | 구성됨 |
 | `dockerfile` | Node 20 Alpine으로 Vite build 후 Nginx 이미지 생성 | 파일명 확인 필요 |
 | `nginx.conf` | React SPA 새로고침 시 `index.html` fallback 처리 | 구성됨 |
 | `k8s/frontend-config.yaml` | `NODE_ENV=production` 등 ConfigMap 설정 | 구성됨 |
@@ -113,7 +111,7 @@ flowchart LR
 | Source | GitHub Connector로 `aivle-bigproject-16/KT-AIVLE-mini-proj04-front-end` 연결 | 구성됨 |
 | Build | `VITE_API_URL`을 `.env`로 생성, ECR 로그인, Docker image build/tag | 구성됨 |
 | Image Push | `879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend`에 commit hash tag와 `latest` push | 구성됨 |
-| Deploy | `aws eks update-kubeconfig`, `frontend-deployment.yaml` 이미지 tag 치환, ConfigMap/Deployment/Service apply | 구성됨 |
+| Deploy | CodePipeline EKS 배포 액션이 `k8s/frontend-config.yaml`·`frontend-deployment.yaml`·`frontend-service.yaml`을 클러스터에 apply | 구성됨 |
 | Expose | Ingress에서 `/` 또는 프론트 경로를 `frontend-service`로 연결 | 추가 필요 |
 | Scaling | `frontend-hpa.yaml` 또는 공통 HPA 매니페스트로 CPU 기준 replica 조절 | 추가 필요 |
 | Monitor | CodeBuild 로그, rollout status, ALB target health, Pod CPU/log 확인 | 구성 필요 |
@@ -126,16 +124,11 @@ build: Docker image build, ECR 주소로 image tag 지정
 post_build: ECR에 commit hash tag와 latest tag push
 ```
 
-## buildspec-deploy.yaml 역할
+## 배포(Deploy) 방식
 
-```text
-install: kubectl 설치
-pre_build: aws eks update-kubeconfig로 user126-cluster 접속 설정
-build: frontend-deployment.yaml의 이미지 tag 수정 후 ConfigMap, Deployment, Service 적용
-post_build: kubectl rollout status로 배포 성공 여부 확인
-```
+배포는 CodePipeline의 **EKS 배포 액션**이 담당합니다. 별도 CodeBuild 배포 단계 없이, 액션이 `k8s/` 매니페스트(`frontend-config.yaml`·`frontend-deployment.yaml`·`frontend-service.yaml`)를 `user126-cluster`에 직접 apply합니다.
 
-배포 단계가 CodeBuild에서 동작하려면 CodeBuild 서비스 역할이 EKS 클러스터의 `aws-auth`에 등록되어 있어야 합니다. 이 IAM 권한 부분은 아직 확정 전이므로 백엔드 README의 `IAM과 aws-auth (수정 필요)` 섹션을 기준으로 확인해야 합니다.
+이 액션은 **CodePipeline 서비스 역할**(`AWSCodePipelineServiceRole-us-east-1-mini16-front-end-pipe`)의 권한으로 동작합니다. 따라서 EKS·EC2(ENI)·CloudWatch Logs IAM 권한과 EKS access entry를 이 역할에 부여해야 합니다(백엔드 README의 동일 절차 참고).
 
 ## 아직 추가 또는 확인이 필요한 배포 항목
 
