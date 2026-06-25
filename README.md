@@ -59,7 +59,7 @@ KT-AIVLE-mini-proj04-front-end/
 | EKS 배포 | 백엔드와 같은 클러스터에서 실행해 ALB/Ingress 라우팅을 단순화합니다. |
 | Docker 이미지 | Vite 빌드 결과물을 Nginx 컨테이너로 실행하면 실행 환경이 고정됩니다. |
 | ECR `lms-frontend` | CodeBuild가 만든 프론트엔드 이미지를 저장하고 EKS에서 pull합니다. |
-| ALB Ingress | `/` 화면 요청은 frontend-service로, API 요청은 backend-service로 나눌 수 있습니다. |
+| ALB Ingress | 백엔드 repo의 `k8s/ingress.yaml`에서 `/` 화면 요청은 frontend-service로, `/api` 요청은 backend-service로 나눕니다. |
 | Auto Scaling | 트래픽 증가 시 frontend Pod replica를 늘려 정적 리소스 응답 부하를 분산합니다. |
 
 ## 전체 클라우드 구조
@@ -112,9 +112,9 @@ flowchart LR
 | Build | `VITE_API_URL`을 `.env`로 생성, ECR 로그인, Docker image build/tag | 구성됨 |
 | Image Push | `879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend`에 commit hash tag와 `latest` push | 구성됨 |
 | Deploy | CodePipeline EKS 배포 액션이 `k8s/frontend-config.yaml`·`frontend-deployment.yaml`·`frontend-service.yaml`을 클러스터에 apply | 구성됨 |
-| Expose | Ingress에서 `/` 또는 프론트 경로를 `frontend-service`로 연결 | 추가 필요 |
-| Scaling | `frontend-hpa.yaml` 또는 공통 HPA 매니페스트로 CPU 기준 replica 조절 | 추가 필요 |
-| Monitor | CodeBuild 로그, rollout status, ALB target health, Pod CPU/log 확인 | 구성 필요 |
+| Expose | 백엔드 repo의 `k8s/ingress.yaml`에서 `/` 요청을 `lms-frontend-service:80`으로 연결 | 매니페스트 반영 |
+| Scaling | EKS 클러스터에 적용된 `lms-frontend-deployment` HPA로 CPU 기준 replica 조절 | 적용 확인 |
+| Monitor | CodeBuild 로그, rollout status, ALB target health, Pod CPU/log 확인 | 일부 확인 |
 
 ## buildspec.yml 역할
 
@@ -128,17 +128,37 @@ post_build: ECR에 commit hash tag와 latest tag push
 
 배포는 CodePipeline의 **EKS 배포 액션**이 담당합니다. 별도 CodeBuild 배포 단계 없이, 액션이 `k8s/` 매니페스트(`frontend-config.yaml`·`frontend-deployment.yaml`·`frontend-service.yaml`)를 `user126-cluster`에 직접 apply합니다.
 
-이 액션은 **CodePipeline 서비스 역할**(`AWSCodePipelineServiceRole-us-east-1-mini16-front-end-pipe`)의 권한으로 동작합니다. 따라서 EKS·EC2(ENI)·CloudWatch Logs IAM 권한과 EKS access entry를 이 역할에 부여해야 합니다(백엔드 README의 동일 절차 참고).
+이 액션은 **CodePipeline 서비스 역할**(`AWSCodePipelineServiceRole-us-east-1-mini16-front-end-pipe`)의 권한으로 동작합니다. 로컬 PowerShell에서 확인한 결과 이 역할은 EKS Access Entry에 등록되어 있으며, CodeConnections/CodeBuild/CodePipeline 실행 정책이 연결되어 있습니다.
 
-## 아직 추가 또는 확인이 필요한 배포 항목
+## Ingress / ALB 매니페스트
 
-| 항목 | 이유 |
+프론트엔드 repo에는 별도 Ingress 매니페스트를 두지 않고, 백엔드 repo의 공통 `k8s/ingress.yaml`에서 frontend/backend 라우팅을 함께 정의합니다. 해당 매니페스트는 AWS Load Balancer Controller가 ALB Ingress를 생성하도록 설정합니다.
+
+| 항목 | 값 |
 | --- | --- |
-| Ingress 매니페스트 | ALB를 생성하고 `/` 요청을 `frontend-service`로 연결해야 합니다. |
-| HPA 매니페스트 | CPU 기준으로 frontend Pod replica를 자동 조절하려면 필요합니다. |
-| `dockerfile` 파일명 | Linux CodeBuild에서 기본 Dockerfile 인식 여부 확인이 필요합니다. |
-| `VITE_API_URL` 환경 변수 | CodeBuild 환경 변수로 실제 백엔드 API 주소가 전달되어야 합니다. |
-| CodeBuild IAM 권한 | ECR push와 EKS kubectl apply 권한이 필요합니다. |
+| Namespace | `default` |
+| Ingress | `lms-ingress` |
+| Ingress Class | `alb` |
+| Scheme | `internet-facing` |
+| Health Check Path | `/` |
+| Target Type | `ip` |
+
+| Path | Service | 역할 |
+| --- | --- | --- |
+| `/` | `lms-frontend-service:80` | React/Nginx 프론트엔드 화면 제공 |
+| `/api` | `lms-backend-service:80` | 백엔드 API 요청 전달 |
+
+따라서 `k8s/ingress.yaml`을 적용하면 외부 사용자의 기본 화면 요청은 `/` 경로를 통해 frontend Service로 전달됩니다.
+
+## Frontend Target Group Health 확인 결과
+
+AWS EC2 콘솔의 Target Groups 화면에서 frontend 대상 그룹 상태를 확인했습니다.
+
+| Target Group | Healthy targets | Unhealthy targets | 상태 |
+| --- | --- | --- | --- |
+| `k8s-default-lmsfront-06753a2f75` | 2/2 | 0 | healthy |
+
+등록된 frontend target 2개가 모두 정상 상태이므로 ALB가 `frontend-service`로 트래픽을 전달할 수 있는 상태입니다.
 
 ## 프론트엔드 요청 흐름
 
