@@ -1,9 +1,7 @@
 import axios from "axios";
 import { setAccessToken, setUser } from "@utils/authStore";
 
-const apiBaseUrl = import.meta.env.PROD
-  ? import.meta.env.VITE_API_URL || "/api"
-  : import.meta.env.VITE_API_URL || "http://localhost:8080";
+const apiBaseUrl = import.meta.env.VITE_API_URL || "/api";
 
 export const refreshAccessToken = async () => {
   const res = await axios.post(`${apiBaseUrl}/auth/refresh`, null, {
