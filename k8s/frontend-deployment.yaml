@@ -23,7 +23,7 @@ spec:
       containers: # image aws_account_id: 변경사항 확인해보기, back도
       - name: frontend-container
         image: 879772956301.dkr.ecr.us-east-1.amazonaws.com/lms-frontend:latest
-        
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 
